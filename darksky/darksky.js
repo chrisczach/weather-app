@@ -4,15 +4,22 @@ const keys = JSON.parse(fs.readFileSync("./keys.json"));
 
 const weather = (error, coordinatesObject) => {
   if (error) {
-    console.log(error);
+    return console.log(error);
   }
   request(
-    `https://api.darksky.net/forecast/${keys.darksky}/${
-      coordinatesObject.latitude
-    },${coordinatesObject.longitude}`,
+    {
+      url: `https://api.darksky.net/forecast/${keys.darksky}/${
+        coordinatesObject.latitude
+      },${coordinatesObject.longitude}`,
+      json: true
+    },
     (error, response, body) => {
-      const currenlty = JSON.parse(body).currently;
-      console.log(currenlty.temperature);
+      if (!error && response.statusCode === 200) {
+        const current = body.currently;
+        console.log(current.temperature);
+      } else {
+        console.log("unable to connect to darksky");
+      }
     }
   );
 };
